@@ -1,0 +1,39 @@
+---
+title: "Data Science Overview"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Step 3 Part 1
+* What do you think being a data scientist is about?
+  + I think that being a data scientist is about being able to use the tools available to you, like computers, to work with raw data and extrapolate the results (and model them) that is desired from that data for the project being worked on.
+
+* What differences/ similarities do you see between data scientists and statisticians?
+  + Differences:
+    - Statisticians focus more on data analysis and modelling while data scientists work on the whole pipeline of analyzing data (a data scientist would establish the environment, establish systems to analyze future projects, etc)
+    - Data scientists clean data more than statisticians, would interact 
+    - Data scientists seem to need/ have more technical coding knowledge/ knowledge about how computers work compared to statisticians while statisticians might have more technical knowledge about the theories behind specific statistical tests being done on the data
+  + Similarities:
+    - Both work with raw data to model analyses and communicate the results efficiently to others
+    - There may be significant overlap in the tools both would use to fulfill their duties
+
+* How do you view yourself in relation to these two areas?
+  + I view myself as leaning more towards a statistician than a data scientists, but I would like to learn more about data science and coding.
+
+## Step 3 Part 2
+Within the iris data set, the petal width attributes, storage mode, and internal structure are investigated
+```{r}
+y <- density(iris$Petal.Width)
+class(y)
+typeof(y)
+str(y)
+```
+
+Next, to visually investigate the petal width distribution data, the density is plotted.
+```{r}
+#| echo: false
+plot(y)
+```
+
