@@ -12,7 +12,6 @@ install.packages("shiny")
 ```{r}
 library(shiny)
 library(bslib)
-getwd()
 ```
 
 Practice establishing an app with the **Hello Shiny** example from the basic lessons page
