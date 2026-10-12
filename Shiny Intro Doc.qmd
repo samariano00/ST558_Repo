@@ -9,8 +9,12 @@ Prepare session to perform tasks
 ```{r}
 library(shiny)
 library(bslib)
+library(maps)
+library(mapproj)
+library(quantmod)
 ```
 
+# Tutorials Part 1
 Practice establishing an app with the **Hello Shiny** example from the basic lessons page
 ```{r}
 # Define UI for app that draws a histogram ----
@@ -235,5 +239,224 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
+```
+
+# Tutorials Part 2
+For the display reactive output practice, here is the code:
+```{r}
+# Define UI for application that draws a histogram
+ui <- page_sidebar(
+  title = "censusVis",
+  sidebar = sidebar(
+    helpText(
+      "Create demographic maps with information from the 2010 US Census."
+    ),
+    selectInput(
+      "var",
+      label = "Choose a variable to display",
+      choices = 
+        c("Percent White",
+          "Percent Black",
+          "Percent Hispanic",
+          "Percent Asian"),
+      selected = "Percent White"
+    ),
+    sliderInput(
+      "range",
+      label = "Range of interest:",
+      min = 0, 
+      max = 100, 
+      value = c(0, 100)
+    )
+  ),
+  textOutput("selected_var")
+)
+
+# Define server logic required
+server <- function(input, output) {
+    output$selected_var <- renderText({
+      paste("You have selected", input$var)
+  })
+  }
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+Launch app in showcase mode
+```{r}
+runApp("census-app", display.mode = "showcase")
+```
+
+Solution for the do-it-yourself portion:
+```{r}
+ui <- page_sidebar(
+  title = "censusVis",
+  sidebar = sidebar(
+    helpText(
+      "Create demographic maps with information from the 2010 US Census."
+    ),
+    selectInput(
+      "var",
+      label = "Choose a variable to display",
+      choices = c("Percent White",
+                  "Percent Black",
+                  "Percent Hispanic",
+                  "Percent Asian"),
+      selected = "Percent White"
+    ),
+    sliderInput(
+      "range",
+      label = "Range of interest:",
+      min = 0, max = 100, value = c(0, 100)
+    )
+  ),
+  textOutput("selected_var"),
+  textOutput("min_max") 
+)
+
+server <- function(input, output) {
+  
+  output$selected_var <- renderText({
+    paste("You have selected", input$var)
+  })
+  
+  output$min_max <- renderText({
+    paste("You have chosen a range that goes from",
+          input$range[1], "to", input$range[2])
+  })
+  }
+
+shinyApp(ui, server)
+```
+
+Read-in counties data
+```{r}
+counties <- readRDS("census-app/data/counties.rds")
+head(counties)
+```
+
+Perform initial percent map practice
+```{r}
+source("census-app/helpers.R")
+percent_map(counties$white, "darkgreen", "% White")
+```
+
+Practice in R script portion:
+```{r}
+source("helpers.R")
+counties <- readRDS("data/counties.rds")
+
+# User interface ----
+ui <- page_sidebar(
+  title = "censusVis",
+
+  sidebar = sidebar(
+    helpText(
+      "Create demographic maps with information from the 2010 US Census."
+    ),
+    selectInput(
+      "var",
+      label = "Choose a variable to display",
+      choices =
+        c(
+          "Percent White",
+          "Percent Black",
+          "Percent Hispanic",
+          "Percent Asian"
+        ),
+      selected = "Percent White"
+    ),
+    sliderInput(
+      "range",
+      label = "Range of interest:",
+      min = 0, 
+      max = 100, 
+      value = c(0, 100)
+    )
+  ),
+
+  card(plotOutput("map"))
+)
+
+# Server logic ----
+server <- function(input, output) {
+  output$map <- renderPlot({
+    percent_map(counties$hispanic, "blue","% Hispanic")
+  })
+}
+
+# Run app ----
+shinyApp(ui, server)
+```
+
+second part of do-it-yourself portion
+```{r}
+# User interface ----
+ui <- page_sidebar(
+  title = "censusVis",
+
+  sidebar = sidebar(
+    helpText(
+      "Create demographic maps with information from the 2010 US Census."
+    ),
+    selectInput(
+      "var",
+      label = "Choose a variable to display",
+      choices =
+        c(
+          "Percent White",
+          "Percent Black",
+          "Percent Hispanic",
+          "Percent Asian"
+        ),
+      selected = "Percent White"
+    ),
+    sliderInput(
+      "range",
+      label = "Range of interest:",
+      min = 0, 
+      max = 100, 
+      value = c(0, 100)
+    )
+  ),
+
+  card(plotOutput("map"))
+)
+
+server <- function(input, output) {
+  output$map <- renderPlot({
+    data <- switch(input$var,
+                   "Percent White" = counties$white,
+                   "Percent Black" = counties$black,
+                   "Percent Hispanic" = counties$hispanic,
+                   "Percent Asian" = counties$asian)
+    color <- switch(input$var,
+                    "Percent White" = "darkgreen",
+                    "Percent Black" = "black",
+                    "Percent Hispanic" = "darkorange",
+                    "Percent Asian" = "darkviolet")
+    legend <- switch(input$var,
+                     "Percent White" = "% White",
+                     "Percent Black" = "% Black",
+                     "Percent Hispanic" = "% Hispanic",
+                     "Percent Asian" = "% Asian")
+
+    percent_map(var = data, color, legend, input$range[1], input$range[2])
+  })
+}
+
+# Run app ----
+shinyApp(ui, server)
+```
+In reactive expressions folder:
+```{r}
+runApp("census-app/stockVis")
+```
+
+Code for corrected app in reactiv expressions folder:
+```{r}
+
 ```
 
