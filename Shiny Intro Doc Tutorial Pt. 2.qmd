@@ -1,0 +1,181 @@
+---
+title: "Shiny Intro Document Tutorial Pt. 2"
+format: html
+editor: source
+---
+
+Prepare session to complete work:
+```{r}
+library(shiny)
+library(bslib)
+library(ggplot2)
+```
+
+# Hello Shiny Portion
+First Practice Code
+```{r}
+# Get the data
+
+file <- "https://github.com/rstudio-education/shiny-course/raw/main/movies.RData"
+destfile <- "movies.RData"
+
+download.file(file, destfile)
+
+# Load data
+
+load("movies.RData")
+
+# Define UI
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    # Select variable for y-axis
+    selectInput(
+      inputId = "y",
+      label = "Y-axis:",
+      choices = c("imdb_rating", "imdb_num_votes", "critics_score", "audience_score", "runtime"),
+      selected = "audience_score"
+    ),
+    # Select variable for x-axis
+    selectInput(
+      inputId = "x",
+      label = "X-axis:",
+      choices = c("imdb_rating", "imdb_num_votes", "critics_score", "audience_score", "runtime"),
+      selected = "critics_score"
+    )
+  ),
+  # Output: Show scatterplot
+  card(plotOutput(outputId = "scatterplot"))
+)
+
+# Define server
+
+server <- function(input, output, session) {
+  output$scatterplot <- renderPlot({
+    ggplot(data = movies, aes_string(x = input$x, y = input$y)) +
+      geom_point()
+  })
+}
+
+# Create a Shiny app object
+
+shinyApp(ui = ui, server = server)
+```
+
+In the do-it-yourself portion:
+```{r}
+# Get the data
+
+file <- "https://github.com/rstudio-education/shiny-course/raw/main/movies.RData"
+destfile <- "movies.RData"
+
+download.file(file, destfile)
+
+# Load data
+
+load("movies.RData")
+
+# Define UI
+
+ui <- page_sidebar(
+  sidebar = sidebar(
+    # Select variable for y-axis
+    selectInput(
+      inputId = "y",
+      label = "Y-axis:",
+      choices = c(
+        "IMBD Rating" = "imdb_rating",
+        "Number of Votes on IMDB" = "imdb_num_votes", 
+        "Critic's Score" = "critics_score", 
+        "Audience's Score" = "audience_score", 
+        "Movie Run Time" = "runtime"),
+      selected = "audience_score"
+    ),
+    # Select variable for x-axis
+    selectInput(
+      inputId = "x",
+      label = "X-axis:",
+      choices = c(
+        "IMBD Rating" = "imdb_rating",
+        "Number of Votes on IMDB" = "imdb_num_votes", 
+        "Critic's Score" = "critics_score", 
+        "Audience's Score" = "audience_score", 
+        "Movie Run Time" = "runtime"),
+      selected = "critics_score"
+    ),
+    # Select point color
+    selectInput(
+      inputId = "z",
+      label = "Data Point Color:",
+      choices = c(
+        "Category" = "title_type", 
+        "Film Genre" = "genre", 
+        "MPAA Rating" = "mpaa_rating", 
+        "Critic's Rating" = "critics_rating", 
+        "Audience Rating" = "audience_rating"),
+      selected = "mpaa_rating"
+    )
+  ),
+  # Output: Show scatterplot
+  card(plotOutput(outputId = "scatterplot"))
+)
+
+# Define server
+
+server <- function(input, output, session) {
+  output$scatterplot <- renderPlot({
+    ggplot(data = movies, aes_string(x = input$x, y = input$y, color = input$z)) +
+      geom_point()
+  })
+}
+
+# Create a Shiny app object
+
+shinyApp(ui = ui, server = server)
+
+```
+
+Practice Portion in server function of Hello Shiny portion:
+```{r}
+# This code would build an app that would allow the user to type in custom text and the output would match their input text
+ui <- page_fluid(
+
+  textInput(
+    inputId = "custom_text",
+    label = "_[1]_"
+  ),
+
+  strong("Text is shown below:"),
+  _[2]_(outputId = "_[3]_")
+)
+
+server <- function(input, output, session){
+
+  output$user_text <- renderText({ input$_[4]_ })
+}
+
+shinyApp(ui = ui, server = server)
+
+# Correct code:
+ui <- page_fluid(
+
+  textInput(
+    inputId = "custom_text",
+    label = "Input some text here:"
+  ),
+
+  strong("Text is shown below:"),
+  textOutput(outputId = "user_text")
+)
+
+server <- function(input, output, session){
+
+  output$user_text <- renderText({input$custom_text})
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+# Reactive Flow Portion
+# Reactivity Essentials
+# Customizing UI
